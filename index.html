@@ -57,3 +57,50 @@ usage: [
 };
 }
 }
+ // 最新狀態
+  const latest = document.getElementById('latest-status');
+  latest.innerHTML = '';
+  if (data.latest_status){
+    if (data.latest_status.build){
+      latest.innerHTML += `<p>Build: ${data.latest_status.build.status} (${data.latest_status.build.branch})</p>`;
+    }
+    if (data.latest_status.test){
+      latest.innerHTML += `<p>Test: ${data.latest_status.test.status} (${data.latest_status.test.failed_count||0} failures)</p>`;
+    }
+  }
+
+  // 今日要點
+  const todayEl = document.getElementById('today-tasks');
+  todayEl.innerHTML = '';
+  (data.today_activities||[]).forEach(t=>{
+    const li = document.createElement('li');
+    li.textContent = `[${t.time}] ${t.action} ${t.skill||''} - ${t.status}`;
+    todayEl.appendChild(li);
+  });
+// 最近動作
+  const recentEl = document.getElementById('recent-actions');
+  recentEl.textContent = (data.recent_commits||[]).map(c => `[${new Date(c.timestamp).toLocaleTimeString()}] ${c.hash.substring(0,7)} ${c.message} - ${c.author}`).join("\n");
+
+  // Chart
+  const ctx = document.getElementById('usageChart').getContext('2d');
+  if (ctx){
+    if (window.usageChart) window.usageChart.destroy();
+    window.usageChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: (data.usage||[]).map(u => u.name),
+        datasets: [{
+          label: '執行次數',
+          data: (data.usage||[]).map(u => u.count),
+          backgroundColor: 'rgba(54, 162, 235, 0.65)'
+        }]
+      },
+      options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { display:false } } }
+    });
+  }
+}
+
+loadData().then(render);
+</script>
+</body>
+</html>
