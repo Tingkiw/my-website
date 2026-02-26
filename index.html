@@ -1,71 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tingkiw | 個人名片</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: #333;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 40px 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-        }
-        .profile-pic {
-            width: 80px;
-            height: 80px;
-            background: #2575fc;
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 30px;
-            font-weight: bold;
-        }
-        h1 { margin: 10px 0; font-size: 24px; }
-        p { color: #666; margin-bottom: 25px; }
-        .links a {
-            display: block;
-            text-decoration: none;
-            background: #fff;
-            color: #2575fc;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #2575fc;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .links a:hover { background: #2575fc; color: #fff; }
-    </style>
+<meta charset="utf-8"/>
+<title>OpenClaw 工作動態看板 - 測試版</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+body { font-family: Arial, sans-serif; margin: 0; background:#f6f7fb; color:#333; }
+.container { padding: 16px; max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.2rem; margin: 0 0 12px; }
+.card { background:#fff; border-radius:10px; padding:16px; margin-bottom:12px; box-shadow:0 2px 6px rgba(0,0,0,.05); }
+ul { padding-left:20px; }
+canvas { width:100% !important; height:240px; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="profile-pic">T</div>
-        <h1>Tingkiw</h1>
-        <p>行動開發探索者 📱</p>
-        <div class="links">
-            <a href="#">我的作品集</a>
-            <a href="https://github.com/tingkiw">GitHub 主頁</a>
-            <a href="#">聯絡我</a>
-        </div>
-    </div>
-</body>
-</html>
+<div class="container">
+<h1>OpenClaw 工作動態看板 - 測試</h1><div class="card">
+<h3>最新專案狀態</h3>
+<div id="latest-status">載入中…</div>
+</div><div class="grid">
+<div class="card" style="width:100%;">
+<h3>今日活動摘要</h3>
+<ul id="today-tasks"></ul>
+</div>
+<div class="card" style="width:100%;">
+<h3>技能使用統計（今日）</h3>
+<canvas id="usageChart"></canvas>
+</div>
+</div><div class="card">
+<h3>最近動作清單</h3>
+<pre id="recent-actions" style="margin:0; background:#111; color:#fff; padding:12px; border-radius:6px; max-height:180px; overflow:auto;"></pre>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+async function loadData(){
+try{
+const res = await fetch('data.json');
+if(!res.ok) throw new Error('data.json 載入失敗');
+return await res.json();
+}catch(e){
+// 若失敗，回退到硬編碼的範例
+return {
+generated_at: "2026-02-26T09:05:00+08:00",
+latest_status: { build: { status:"success", branch:"main" }, test: { status:"failed", failed_count:5 } },
+today_activities: [
+{ time:"09:00", action:"install", skill:"healthcheck", status:"OK" }
+],
+recent_commits: [
+{ hash:"abcd1234", message:"Initial test data", author:"you", timestamp:"2026-02-26T08:50:00Z" }
+],
+usage: [
+{ name:"healthcheck", count:4, success:4 }
+]
+};
+}
+}
