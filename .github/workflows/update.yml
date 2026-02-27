@@ -1,0 +1,30 @@
+name: Auto Update Dashboard Data
+
+on:
+  schedule:
+    # 這裡設定每小時執行一次 (UTC 時間)
+    - cron: '0 * * * *'
+  workflow_dispatch: # 這可以讓你手動點擊執行按鈕
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Run update script
+        run: python update_status.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data.json
+          git commit -m "Auto update data.json" || exit 0
+          git push
