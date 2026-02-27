@@ -140,13 +140,27 @@
   };
 
   // 優先嘗試從檔案讀取，失敗則使用上方預設資料
+  // 定義一個執行更新的函式
+const updateDashboard = () => {
+  console.log("正在檢查更新...", new Date().toLocaleTimeString());
+  
   fetch('data.json')
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) throw new Error("讀取失敗");
+      return response.json();
+    })
     .then(data => renderDashboard(data))
     .catch(() => {
-      console.warn("未偵測到 data.json，顯示示範數據");
+      // 如果讀不到檔案，就用預設資料渲染（示範用）
       renderDashboard(rawData);
     });
+};
+
+// 1. 頁面載入後立即執行一次
+updateDashboard();
+
+// 2. 設定每 30 秒自動執行一次 (30000 毫秒)
+setInterval(updateDashboard, 30000);
 </script>
 
 </body>
