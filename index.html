@@ -65,7 +65,7 @@
       background: #1e1e1e;
       color: #dcdcdc;
       padding: 12px;
-border-radius: 8px;
+      border-radius: 8px;
       max-height: 180px;
       overflow: auto;
       font-size: 0.85rem;
@@ -184,7 +184,8 @@ border-radius: 8px;
         }
         const data = await response.json();
         return data;
-      } catch (e) {console.error("Load data.json failed:", e);
+      } catch (e) {
+        console.error("Load data.json failed:", e);
         // Provide static fallback data if fetching fails
         const now = new Date().toISOString();
         return {
