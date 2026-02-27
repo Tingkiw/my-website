@@ -1,35 +1,51 @@
 import json
 import datetime
-import random
 
-# 1. 產生數據
+# 1. 設定固定為「正常」的數據
 now = datetime.datetime.now()
 iso_now = now.isoformat()
-current_mode = random.choice(["normal", "error"])
-test_status = "success" if current_mode == "normal" else "failed"
-failed_count = 0 if current_mode == "normal" else 5
 
 data = {
     "generated_at": iso_now,
     "latest_status": {
-        "build": { "status": "success", "branch": "main" },
-        "test": { "status": test_status, "failed_count": failed_count },
-        "deploy_staging": { "status": "success" }
+        "build": { 
+            "status": "success", 
+            "branch": "main" 
+        },
+        "test": { 
+            "status": "success",  # 固定為成功
+            "failed_count": 0     # 失敗次數歸零
+        },
+        "deploy_staging": { 
+            "status": "success"   # 固定為成功
+        }
     },
     "today_activities": [
-        {"time": now.strftime("%H:%M"), "action": "github_action", "skill": "auto_update", "status": "OK"}
+        {
+            "time": now.strftime("%H:%M"), 
+            "action": "system_check", 
+            "skill": "monitor", 
+            "status": "OK"
+        },
+        {
+            "time": "09:00", 
+            "action": "daily_boot", 
+            "skill": "system", 
+            "status": "OK"
+        }
     ],
     "recent_commits": [
-        { "hash": "a1b2c3d4", "message": "Auto update from GitHub Actions", "author": "Bot" }
+        { 
+            "hash": "7b2d1a9", 
+            "message": "穩定版本：所有系統運作正常", 
+            "author": "Admin" 
+        }
     ],
-    "alerts": []
+    "alerts": [] # 清空所有警示
 }
 
-if current_mode == "error":
-    data["alerts"].append({"level": "warning", "message": "自動更新偵測到異常測試狀態", "timestamp": iso_now})
-
-# 2. 存成檔案
+# 2. 寫入檔案
 with open('data.json', 'w', encoding='utf-8') as f:
     json.dump(data, f, ensure_ascii=False, indent=2)
 
-print("data.json 更新完成！")
+print("數據已更新為『正常運作』狀態！")
